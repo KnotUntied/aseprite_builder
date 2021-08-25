@@ -82,10 +82,17 @@ jobs:
           curl -o Skia-${{ runner.os }}-Release-X64.zip -L https://github.com/aseprite/skia/releases/download/m81-b607b32047/Skia-${{ runner.os }}-Release-X64.zip
           unzip Skia-${{ runner.os }}-Release-X64.zip -d skia
       - name: Download Aseprite release
-        run: |
-          curl -o Aseprite-source.zip -L ${{ needs.check-version.outputs.download_url }}
-          unzip Aseprite-source.zip -d aseprite
-          mkdir -p aseprite/build
+        uses: actions/checkout@v2
+        with:
+          repository: aseprite/aseprite
+          ref: ${{ needs.check-version.outputs.latest_tag }}
+          path: 'aseprite'
+          submodules: 'recursive'
+        # run: |
+        #   curl -o Aseprite-source.zip -L ${{ needs.check-version.outputs.download_url }}
+        #   unzip Aseprite-source.zip -d aseprite
+      - name: Create build folder
+        run: mkdir -p aseprite/build
       - name: (Windows) Set architecture for the produced binary
         if: matrix.os == 'windows-latest'
         shell: cmd
